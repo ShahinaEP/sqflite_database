@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../controller/product_controller.dart';
 import '../database/database_helper.dart';
+import '../model/profile_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key ? key}) : super(key: key);
@@ -38,11 +39,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _loadFromApi() async {
-    DbHelper().getProductdata();
-    final  apiProvider = Get.put(ProductController());
-    await apiProvider.getData();
-  }
+  // _loadFromApi() async {
+  //   DbHelper().getProductdata();
+  //   final  apiProvider = Get.put(ProductController());
+  //   await apiProvider.getData();
+  // }
 
   _loadFromProfileApi() async {
     DbHelper().getProfiledata();
@@ -68,33 +69,36 @@ class _HomePageState extends State<HomePage> {
   }
 
   buildProductData() {
-    return Container(
-      child: Text(DbHelper().getProfiledata().toString()),
-    );
-      // FutureBuilder(
-      //   future: DbHelper().getProfiledata(),
-      //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-      //     if (!snapshot.hasData) {
-      //       return Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     } else {
-      //       return ListView.builder(
-      //
-      //         itemCount: 1,
-      //         itemBuilder: (BuildContext context, int index) {
-      //           return ListTile(
-      //             leading: Text(
-      //               "${index + 1}",
-      //               style: TextStyle(fontSize: 20.0),
-      //             ),
-      //             title: Text(
-      //                 "Name: ${snapshot}"),
-      //           );
-      //         },
-      //       );
-      //     }
-      //   },
-      // );
+    return
+      FutureBuilder<ProfliteListModel?>(
+        future: DbHelper().getProfiledata(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if(snapshot.hasData){
+            return ListView.builder(
+
+              itemCount: 1,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  leading: Text(
+                    "${index + 1}",
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  title: Text(
+                      "Name: ${snapshot.data.page}"),
+                );
+              },
+            );
+          }
+          else{
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+        },
+      );
   }
 }

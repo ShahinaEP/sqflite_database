@@ -35,7 +35,7 @@ class ProductController extends GetxController {
     loader.value = true;
     var apiData = await _productRepository.getProfile();
     // print("Controller Response  Id ___${apiData!.length}");
-    if (apiData != null) {
+    if (apiData.data != null) {
       allProfileList.value.add(apiData);
       // for (var element in allProfileList.value) {
         DbHelper().createProfile(apiData);

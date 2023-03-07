@@ -27,14 +27,14 @@ class DbHelper {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     final path = join(documentsDirectory.path, 'product.db');
 
-    return await openDatabase(path, version: 1,
+    return await openDatabase(path, version: 4,
         onCreate: (Database db, int version) async {
-          await db.execute('''
-        CREATE TABLE product (id INTEGER PRIMARY KEY ,title TEXT)
-          ''');
+        //   await db.execute('''
+        // CREATE TABLE product (id INTEGER PRIMARY KEY ,title TEXT)
+        //   ''');
 
           await db.execute('''
-        CREATE TABLE profile (id INTEGER PRIMARY KEY ,page TEXT)
+        CREATE TABLE profile (id INTEGER PRIMARY KEY ,page INTEGER,)
           ''');
         });
   }
@@ -57,35 +57,43 @@ class DbHelper {
     return res;
   }
 
-  Future<List<ProductModel>> getProductdata() async {
-    final db = await database;
-    final res = await db!.rawQuery("SELECT * FROM product");
-
-    List<ProductModel> list =
-    res.isNotEmpty ? res.map((c) => ProductModel.fromJson(c)).toList() : [];
-
-    return list;
-  }
+  // Future<List<ProductModel>> getProductdata() async {
+  //   final db = await database;
+  //   final res = await db!.rawQuery("SELECT * FROM product");
+  //
+  //   List<ProductModel> list =
+  //   res.isNotEmpty ? res.map((c) => ProductModel.fromJson(c)).toList() : [];
+  //
+  //   return list;
+  // }
 
 
   // Insert profile on database
   createProfile(ProfliteListModel profile) async {
     final db = await database;
     final res = await db!.insert('profile',
-        profile.toJson(),conflictAlgorithm: ConflictAlgorithm.replace);
+        {
+          "page":profile.page,
+
+        },conflictAlgorithm: ConflictAlgorithm.replace);
     return res;
   }
 
 
-  Future<dynamic> getProfiledata() async {
+  Future<ProfliteListModel?> getProfiledata() async {
     final db = await database;
-    final res = await db!.rawQuery("SELECT * FROM profile");
+    final res = await db!.query("profile");
     // <ProfliteListModel>
     print("res : $res ");
+    ProfliteListModel? profliteListModel;
+    res.map((e) {
+      profliteListModel=  ProfliteListModel.fromJson(e);
+    }).toList();
+print(profliteListModel!.page);
     // String list
     // List<ProfliteListModel> list =
     // res.isNotEmpty ? res.map((c) => ProfliteListModel.fromJson(c)).toList() : [];
 
-    return res;
+    return profliteListModel;
   }
 }

@@ -19,7 +19,7 @@ class ProductRepository {
     }
   }
 
-  getProfile() async {
+  Future<ProfliteListModel>getProfile() async {
     var response = await http.get(Uri.parse("https://reqres.in/api/users?page=2"));
 
     if (response.statusCode == 200) {
